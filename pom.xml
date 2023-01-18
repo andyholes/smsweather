@@ -12,7 +12,7 @@
 	<artifactId>smsweather</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>smsweather</name>
-	<description>Get weather forecast via SMS</description>
+	<description>Get weather forecast via WhatsApp</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -35,9 +35,9 @@
 			<version>1.4.2.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.11</version>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
