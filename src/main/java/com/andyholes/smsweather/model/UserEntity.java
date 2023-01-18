@@ -16,9 +16,9 @@ public class UserEntity {
     @Id
     private Long id;
     private String phoneNumber;
-    private boolean isActive;
+    private boolean isActive = false;
     private String address;
     private Long latitude;
     private Long longitude;
-    private String verificationCode;
+    private String code;
 }
