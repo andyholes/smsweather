@@ -1,5 +1,8 @@
 package com.andyholes.smsweather.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +17,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users")
 public class UserEntity {
     @Id
-    private Long id;
-    private String phoneNumber;
-    private boolean isActive = false;
+    private String id;
+
+    @NotBlank
+    @Pattern(regexp = "[0-9]{10}")
+    private String phone;
+
+    @NotBlank
     private String address;
+
     private Long latitude;
+
     private Long longitude;
+
+    private boolean isActive;
+
     private String code;
 }
