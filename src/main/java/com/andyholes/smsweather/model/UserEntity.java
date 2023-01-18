@@ -26,9 +26,9 @@ public class UserEntity {
     @NotBlank
     private String address;
 
-    private Long latitude;
+    private String latitude;
 
-    private Long longitude;
+    private String longitude;
 
     private boolean isActive;
 
