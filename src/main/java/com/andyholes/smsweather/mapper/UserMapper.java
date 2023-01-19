@@ -9,9 +9,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-//    @Mapping(target = "isActive", ignore = true)
     UserDto userEntity2UserDto(UserEntity user);
-
+    @Mapping(target = "active", ignore = true)
     UserEntity userDto2UserEntity(UserDto dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

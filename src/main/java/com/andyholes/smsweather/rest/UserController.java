@@ -2,6 +2,7 @@ package com.andyholes.smsweather.rest;
 
 import com.andyholes.smsweather.model.dto.UserDto;
 import com.andyholes.smsweather.service.IUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class UserController {
     private IUserService userSevice;
 
     @PostMapping
-    private ResponseEntity<UserDto> saveUser(@RequestBody UserDto dto){
+    private ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto dto){
         UserDto savedUser = userSevice.saveUser(dto);
         return ResponseEntity.ok(dto);
     }

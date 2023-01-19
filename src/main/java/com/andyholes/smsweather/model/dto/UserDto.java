@@ -18,5 +18,5 @@ public class UserDto {
     @NotBlank
     private String address;
 
-    private boolean isActive;
+    private boolean active;
 }
