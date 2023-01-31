@@ -46,6 +46,7 @@ public class MessageSender {
     public void sendAllMessages(){
         for (UserEntity user: userRepository.findAll()) {
             String body =
+                    //TODO: armar body con datos obtenidos
                     "El clima en ciudad de " +
                     user.getCity() + "sera de 20 a 30 grados"
                     ;
