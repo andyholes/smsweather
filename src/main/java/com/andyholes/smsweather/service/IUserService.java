@@ -17,6 +17,4 @@ public interface IUserService {
     boolean validateUser(String phone, String code);
 
     List<UserDto> getAllUsers();
-
-    UserEntity setCoordinates(UserEntity user) throws IOException;
 }
