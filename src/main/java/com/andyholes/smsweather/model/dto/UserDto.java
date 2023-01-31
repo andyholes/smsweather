@@ -18,5 +18,7 @@ public class UserDto {
     @NotBlank
     private String city;
 
+    private String country;
+
     private boolean active;
 }

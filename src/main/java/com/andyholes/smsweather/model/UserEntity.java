@@ -25,9 +25,7 @@ public class UserEntity {
     @NotBlank
     private String city;
 
-    private Double latitude;
-
-    private Double longitude;
+    private String country;
 
     private boolean active;
 
