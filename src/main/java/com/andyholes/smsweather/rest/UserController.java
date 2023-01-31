@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -18,7 +20,7 @@ public class UserController {
     private IUserService userSevice;
 
     @PostMapping
-    private ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto dto){
+    private ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto dto) throws IOException {
         UserDto savedUser = userSevice.saveUser(dto);
         return ResponseEntity.ok(dto);
     }

@@ -1,15 +1,20 @@
 package com.andyholes.smsweather.service.impl;
 
+import com.andyholes.smsweather.exception.NotFoundException;
 import com.andyholes.smsweather.mapper.UserMapper;
 import com.andyholes.smsweather.model.UserEntity;
 import com.andyholes.smsweather.model.dto.UserDto;
 import com.andyholes.smsweather.repository.UserRepository;
 import com.andyholes.smsweather.service.IUserService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -20,27 +25,35 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private UserMapper userMapper;
 
+    private final String COUNTRY_CODE = "AR";
+    private final String GEOCODING_API_KEY = "";
+
     @Override
-    public UserDto saveUser(UserDto dto) {
+    public UserDto saveUser(UserDto dto) throws IOException {
         UserEntity user = userMapper.userDto2UserEntity(dto);
-        user.setCode(generateCode());
+        setCoordinates(user);
         UserEntity savedUser = userRepository.save(user);
         return userMapper.userEntity2UserDto(savedUser);
     }
 
     @Override
-    public UserDto updateUser(UserDto dto) {
-        return null;
+    public UserDto updateUser(String phone, UserDto dto) throws IOException {
+        UserEntity user = userRepository.findByPhone(phone);
+        if(user == null){
+            throw new NotFoundException("The phone number is not registered");
+        }
+        userMapper.updateUserFromUserDto(dto, user);
+        if (!dto.getCity().equals(user.getCity())){
+            setCoordinates(user);
+        }
+        UserEntity savedUser = userRepository.save(user);
+        return userMapper.userEntity2UserDto(savedUser);
     }
 
     @Override
     public boolean validateUser(String phone, String code) {
-        return false;
-    }
-
-    @Override
-    public boolean deactivateUser(String phone, String code) {
-        return false;
+        UserEntity user = userRepository.findByPhone(phone);
+        return (user.getCode().equals(code));
     }
 
     @Override
@@ -48,14 +61,20 @@ public class UserServiceImpl implements IUserService {
         return null;
     }
 
-    @Override
-    public String generateCode() {
-        Random rand = new Random();
-        String code = rand.ints(48, 123)
-                .filter(num -> (num<58 || num>64) && (num<91 || num>96))
-                .limit(6)
-                .mapToObj(c -> (char)c).collect(StringBuffer::new, StringBuffer::append, StringBuffer::append)
-                .toString();
-        return code;
+    public UserEntity setCoordinates(UserEntity user) throws IOException {
+
+        URL url = new URL("http://api.openweathermap.org/geo/1.0/direct?q=" + user.getCity() + "," + COUNTRY_CODE + "&limit=1&appid=" + GEOCODING_API_KEY);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestProperty("accept", "application/json");
+        InputStream responseStream = connection.getInputStream();
+
+        JSONObject jsonObject = new JSONObject(responseStream);
+        Double lat = jsonObject.getDouble("lat");
+        Double lon = jsonObject.getDouble("lon");
+
+        user.setLatitude(lat);
+        user.setLongitude(lon);
+
+        return user;
     }
 }
