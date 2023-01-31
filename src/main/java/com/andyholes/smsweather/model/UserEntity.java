@@ -23,11 +23,11 @@ public class UserEntity {
     private String phone;
 
     @NotBlank
-    private String address;
+    private String city;
 
-    private String latitude;
+    private Double latitude;
 
-    private String longitude;
+    private Double longitude;
 
     private boolean active;
 

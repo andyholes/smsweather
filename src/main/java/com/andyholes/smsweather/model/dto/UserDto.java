@@ -16,7 +16,7 @@ public class UserDto {
     private String phone;
 
     @NotBlank
-    private String address;
+    private String city;
 
     private boolean active;
 }
