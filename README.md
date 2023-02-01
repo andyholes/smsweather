@@ -1,2 +1,2 @@
 # smsweather
-Get weather alerts on WhatsApp
+Get daily weather alerts on your phone via SMS
