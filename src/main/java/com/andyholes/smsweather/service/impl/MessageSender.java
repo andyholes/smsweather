@@ -7,6 +7,7 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 
 @Component
+@PropertySource("application.properties")
 public class MessageSender {
 
     @Autowired
@@ -34,7 +36,6 @@ public class MessageSender {
     private String authToken;
 
     String argCode = "+54";
-    LocalDate currentDate;
 
     void sendMessage(String phone, String body) {
         Twilio.init(accountSid, authToken);
@@ -50,10 +51,12 @@ public class MessageSender {
         }
     }
 
-    @Scheduled(fixedRate = 5000) //usar (cron = "S M H D M A")
+    @Scheduled(fixedRate = 10000) //usar (cron = "S M H D M A")
     public void sendAllMessages() throws IOException {
-        System.out.println("ejecuto");
+        LocalDate currentDate = LocalDate.now();
+
         for (UserEntity user: userRepository.findAll()) {
+
             HashMap<String, Double> coordinates = coordinatesFetcher.fetchCoordinates(user.getCity(), user.getCountry());
             HashMap<String, Double> weather = weatherFetcher.fetchWeather(coordinates.get("lat"),coordinates.get("lon"));
 
@@ -62,9 +65,10 @@ public class MessageSender {
                             " hoy " + currentDate.getDayOfWeek().name() +" "+
                             currentDate.getDayOfMonth() + " de " +
                             currentDate.getMonth().name() +
-                            " sera de maxima " + weather.get("max") +
-                            " y minima " + weather.get("min") +
-                            ". La media sera de " + weather.get("day");
+                            " sera de maxima " + weather.get("temp_max") +
+                            " y minima " + weather.get("temp_min") +
+                            ". La sensacion termica es de " + weather.get("feels_like");
+            System.out.println("Enviando mensaje a "+ user.getPhone());
             sendMessage(user.getPhone(),body);
         }
     }
