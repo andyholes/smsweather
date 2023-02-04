@@ -5,23 +5,31 @@ import com.andyholes.smsweather.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api")
 public class UserController {
 
     @Autowired
     private IUserService userSevice;
 
-    @PostMapping
+    @PostMapping("/user")
     private ResponseEntity<UserDto> saveUser(@Valid @RequestBody UserDto dto) throws IOException {
         UserDto savedUser = userSevice.saveUser(dto);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.status(200).body(dto);
+    }
+
+    @GetMapping("/code")
+    ResponseEntity<?> generateCode(@RequestAttribute("phone") String phone){
+        return userSevice.generateCode(phone);
+    }
+
+    @PostMapping("/code")
+    ResponseEntity<?> validateCode(@RequestAttribute("phone") String phone,
+                                @RequestAttribute("code") String code){
+        return userSevice.validateUser(phone, code);
     }
 }
