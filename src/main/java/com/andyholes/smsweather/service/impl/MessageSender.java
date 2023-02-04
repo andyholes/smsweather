@@ -10,29 +10,37 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.HashMap;
+
 @Component
 public class MessageSender {
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CoordinatesFetcher coordinatesFetcher;
+
+    @Autowired
+    private WeatherFetcher weatherFetcher;
+
     @Value("${account.sid}")
-    private final String ACCOUNT_SID = "";
+    private String accountSid;
     @Value("${service.sid}")
-    private final String SERVICE_SID = "";
+    private String serviceSid;
     @Value("${auth.token}")
-    private final String AUTH_TOKEN = "";
+    private String authToken;
 
     String argCode = "+54";
-
-    public MessageSender() {
-    }
+    LocalDate currentDate;
 
     void sendMessage(String phone, String body) {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        Twilio.init(accountSid, authToken);
         Message message = Message.creator(
                         new com.twilio.type.PhoneNumber(argCode + phone),
-                        SERVICE_SID,
+                        serviceSid,
                         body)
                 .create();
         int statusCode;
@@ -42,14 +50,21 @@ public class MessageSender {
         }
     }
 
-    @Scheduled
-    public void sendAllMessages(){
+    @Scheduled(fixedRate = 5000) //usar (cron = "S M H D M A")
+    public void sendAllMessages() throws IOException {
+        System.out.println("ejecuto");
         for (UserEntity user: userRepository.findAll()) {
+            HashMap<String, Double> coordinates = coordinatesFetcher.fetchCoordinates(user.getCity(), user.getCountry());
+            HashMap<String, Double> weather = weatherFetcher.fetchWeather(coordinates.get("lat"),coordinates.get("lon"));
+
             String body =
-                    //TODO: armar body con datos obtenidos
-                    "El clima en ciudad de " +
-                    user.getCity() + "sera de 20 a 30 grados"
-                    ;
+                    "El clima para la ciudad de " + user.getCity() +
+                            " hoy " + currentDate.getDayOfWeek().name() +" "+
+                            currentDate.getDayOfMonth() + " de " +
+                            currentDate.getMonth().name() +
+                            " sera de maxima " + weather.get("max") +
+                            " y minima " + weather.get("min") +
+                            ". La media sera de " + weather.get("day");
             sendMessage(user.getPhone(),body);
         }
     }

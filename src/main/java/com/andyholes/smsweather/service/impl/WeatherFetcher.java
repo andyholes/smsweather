@@ -14,11 +14,11 @@ import java.util.HashMap;
 public class WeatherFetcher {
 
     @Value("${api.key}")
-    private final String API_KEY = "";
+    private String apiKey;
 
     public HashMap<String, Double> fetchWeather(Double lat, Double lon) throws IOException {
 
-        URL url = new URL("https://pro.openweathermap.org/data/2.5/forecast/daily?lat=" + lat + "&" + lon + "={lon}&appid=" + API_KEY + "&cnt=3&units=metric");
+        URL url = new URL("https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&" + lon + "={lon}&appid=" + apiKey + "&cnt=3&units=metric");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("accept", "application/json");
         InputStream responseStream = connection.getInputStream();
